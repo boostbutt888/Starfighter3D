@@ -23,7 +23,7 @@ jobs:
       - name: Checkout Mission 03 preview branch
         uses: actions/checkout@v6
         with:
-          ref: feature/mission-03-incursion
+          ref: feature/mission-03-cinematic-overhaul
           path: mission-preview
       - name: Package Mission 03 preview
         working-directory: mission-preview
