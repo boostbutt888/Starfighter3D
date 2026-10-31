@@ -20,6 +20,16 @@ jobs:
         run: npm test
       - name: Package the static game
         run: npm run build
+      - name: Checkout Mission 03 preview branch
+        uses: actions/checkout@v6
+        with:
+          ref: feature/mission-03-incursion
+          path: mission-preview
+      - name: Package Mission 03 preview
+        working-directory: mission-preview
+        run: npm run build
+      - name: Add separate preview without replacing main game
+        run: cp -R mission-preview/dist dist/preview
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload the game
