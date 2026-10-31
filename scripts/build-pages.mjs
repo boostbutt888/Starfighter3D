@@ -4,7 +4,7 @@ import path from 'node:path';
 const root=fileURLToPath(new URL('../',import.meta.url)),out=path.join(root,'dist');
 await rm(out,{recursive:true,force:true});await mkdir(out,{recursive:true});
 const entries=await readdir(root,{withFileTypes:true});
-const files=entries.filter(e=>e.isFile()&&(e.name.endsWith('.js')||['index.html','hangar.html','style.css'].includes(e.name))).map(e=>e.name);
+const files=entries.filter(e=>e.isFile()&&(e.name.endsWith('.js')||['index.html','hangar.html','style.css','app.webmanifest'].includes(e.name))).map(e=>e.name);
 for(const name of [...files,'assets','vendor'])await cp(path.join(root,name),path.join(out,name),{recursive:true});
 await writeFile(path.join(out,'.nojekyll'),'');
 console.log(`Pages site ready: ${files.length} game files, bundled assets and vendor files.`);

@@ -90,7 +90,7 @@ Wall architecture includes sloped buttresses, framed recessed equipment wells, c
 
 ## Phone landscape play and scenery contact
 
-On the same Wi-Fi, run `Play on Phone.command` on the Mac and open the printed address on the phone. The phone server uses port 8081 and serves this project folder. Turn the phone sideways. The left thumbstick steers; automatic fire starts enabled, with separate Auto Fire, Fire, Weapon and Bomb controls on the right. Full screen and landscape locking are requested where the browser supports them. Rotating upright or leaving the page pauses flight; upright mode shows a rotation prompt. The layout respects screen notches and smaller landscape viewports. Touch devices use a lower pixel ratio and smaller shadow maps.
+On the same Wi-Fi, run `Play on Phone.command` on the Mac and open the printed address on the phone. The phone server uses port 8081 and serves this project folder. Turn the phone sideways. The left thumbstick steers; automatic fire starts enabled, with separate Auto Fire, Fire, Weapon and Bomb controls on the right. The FULL SCREEN button requests full screen where supported and gives Home Screen web-app instructions on iPhone. Rotating upright or leaving the page pauses flight; upright mode shows a rotation prompt. The layout respects screen notches and smaller landscape viewports. Touch devices use a lower pixel ratio and smaller shadow maps.
 
 Touching canyon walls, trench armor/relief, or turret bodies now deals 5 hull damage before difficulty scaling, at most once per 0.8 seconds of continuous contact. Wing clearance differs by craft. Contact produces a short ship wobble, impact sound, sparks and light camera shake; sustained scraping keeps the wobble active. Scenery contact does not grant a new grace period against enemy lasers. Trench walls push the craft back into the channel. Destroyed gun bodies remain physical wrecks. The camera follows wider lateral movement so walls are reachable. The minimum altitude now permits close passes around the low Tatooine batteries.
 
@@ -99,3 +99,13 @@ Touching canyon walls, trench armor/relief, or turret bodies now deals 5 hull da
 ## GitHub Pages deployment
 
 The repository’s Pages source must be **GitHub Actions**. Every push to `main` runs the gameplay tests, packages only runtime files into `dist`, and deploys through the `github-pages` environment. `npm run build` creates the same artifact locally. All JavaScript, textures, fonts, audio and links use relative paths so the site works under `/Starfighter3D/`. Local launchers, QA fixtures and screenshots are not in the deployed artifact. Audio starts after the user launches the mission; full-screen and orientation locking depend on browser support.
+
+## iPhone Safari fixes
+
+Audio resumes directly from the Launch/Enable Audio gesture before any full-screen request. On supported Safari versions the audio session uses `playback` so media audio is not tied to the phone’s ringer setting. **ENABLE AUDIO** is available in the header and pause panel to recover after Safari interrupts the audio session. Instrument decoding is limited to three simultaneous loads.
+
+Touch weapon and bomb actions fire on pointer-down with duplicate-click suppression. The selected weapon appears on its button immediately. Steering and held fire use independent pointer lifetimes.
+
+Phones render at up to 60 fps with a lower pixel ratio, cheaper antialiasing/shadows, and less frequent HUD text updates. Explosions reuse two permanent lights so kills do not change shader light counts. The next canyon/trench section is prepared in idle time before the recycling boundary.
+
+**FULL SCREEN** requests native full screen where supported. Safari on iPhone may not support full screen for arbitrary game elements; the button then explains Safari → Share → Add to Home Screen → Open as Web App. The manifest and Apple web-app metadata support launching without browser bars from the Home Screen. This does not install an offline cache; loading the game still needs a connection. See [Apple’s Home Screen web-app guide](https://support.apple.com/guide/iphone/iphea86e5236/ios) and [WebKit’s audio-session issue](https://bugs.webkit.org/show_bug.cgi?id=237322).
