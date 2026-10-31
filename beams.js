@@ -1,0 +1,10 @@
+import * as T from './vendor/three.module.js';
+import {beamPhase,distanceToSegment} from './combat.js';
+const unit=new T.CylinderGeometry(1,1,1,10);
+export class BossBeams{
+ constructor(scene,onHit,sound){Object.assign(this,{scene,onHit,sound});this.beams=[];this.warningTime=.8;this.color=0xff3927;}
+ add(origin,aim){const dir=aim.clone().sub(origin).normalize(),end=origin.clone().addScaledVector(dir,origin.distanceTo(aim)+12);let group=new T.Group(),geo=new T.BufferGeometry().setFromPoints([origin,end]),warning=new T.Line(geo,new T.LineBasicMaterial({color:0xff6c43,transparent:true,opacity:.5,depthWrite:false,toneMapped:false}));group.add(warning);const beam=new T.Mesh(unit,new T.MeshBasicMaterial({color:this.color,transparent:true,opacity:.75,blending:T.AdditiveBlending,depthWrite:false,toneMapped:false}));beam.position.copy(origin).add(end).multiplyScalar(.5);beam.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),dir);beam.scale.set(.33,origin.distanceTo(end),.33);const core=new T.Mesh(unit,new T.MeshBasicMaterial({color:0xfff1ba,toneMapped:false}));core.scale.set(.36,1,.36);beam.add(core);group.add(beam);beam.visible=false;this.scene.add(group);this.beams.push({group,warning,beam,origin:origin.clone(),end,age:0,fired:false,hit:false});}
+ update(dt,ship){for(const b of [...this.beams]){b.age+=dt;const phase=beamPhase(b.age,this.warningTime);b.warning.visible=phase==='warning';b.beam.visible=phase==='firing';b.warning.material.opacity=.22+Math.sin(b.age*21)**2*.45;if(phase==='firing'){if(!b.fired){b.fired=true;this.sound?.laser(false)}b.beam.scale.x=b.beam.scale.z=.35+Math.sin(b.age*50)*.04;if(!b.hit&&distanceToSegment(ship.position,b.origin,b.end)<1.05){b.hit=true;this.onHit?.()}}if(phase==='expired')this.remove(b)}}
+ remove(b){this.scene.remove(b.group);b.warning.geometry.dispose();b.warning.material.dispose();b.beam.material.dispose();b.beam.children[0].material.dispose();this.beams.splice(this.beams.indexOf(b),1)}
+ clear(){for(const b of [...this.beams])this.remove(b)}
+}

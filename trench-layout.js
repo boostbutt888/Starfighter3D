@@ -1,0 +1,6 @@
+// Deterministic route construction: every streamed section has its own asymmetric layout.
+export const TRENCH_LENGTH=160;
+export const trenchRandom=n=>{const x=Math.sin(n*127.1+311.7)*43758.54;return x-Math.floor(x)};
+const zones=[{name:'OUTER DEFENSE CUT',detail:'armor',height:43},{name:'HEAT-SINK GALLERIES',detail:'vents',height:48},{name:'SERVICE WELLS',detail:'recess',height:40},{name:'BUTTRESS CORRIDOR',detail:'buttress',height:55},{name:'THERMAL CONDUITS',detail:'pipes',height:46},{name:'VADER INTERCEPT',detail:'citadel',height:50}];
+export function trenchProfile(distance){return zones[Math.min(zones.length-1,Math.floor(Math.max(0,distance)/320))]}
+export function trenchSection(index){const zone=trenchProfile(Math.max(0,index)*TRENCH_LENGTH),r=n=>trenchRandom(index*131.7+n);let bays=[];for(const side of [-1,1]){let z=0,serial=0;while(z<TRENCH_LENGTH-.01){const key=(side+2)*100+serial*19,width=Math.min(TRENCH_LENGTH-z,18+r(key)*18),height=zone.height+(r(key+1)-.5)*10;const types=['armor','vents','recess','buttress','pipes'];bays.push({side,z:z+width/2,width,height,type:r(key+2)<.56?zone.detail:types[Math.floor(r(key+3)*types.length)],relief:.7+r(key+4)*2.5,seed:index*887+key});z+=width;serial++}}return {index,zone,bays}}
