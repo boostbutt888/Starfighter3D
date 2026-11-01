@@ -23,8 +23,11 @@ jobs:
       - name: Checkout Mission 03 preview branch
         uses: actions/checkout@v6
         with:
-          ref: feature/mission-03-cinematic-overhaul
+          ref: 7c1c59e0e9880ec66af8ac5568de52f8a1a01d6b
           path: mission-preview
+      - name: Test Mission 03 preview
+        working-directory: mission-preview
+        run: npm test
       - name: Package Mission 03 preview
         working-directory: mission-preview
         run: npm run build
