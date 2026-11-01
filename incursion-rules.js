@@ -16,3 +16,13 @@ export function tunnelLayout(serial,seed=1){
  const side=random()<.5?-1:1;boxes.push({w:17,h:2.8,d:5,x:side*16,y:kind%2?top+1.4:bottom-1.4,z:24});
  return {kind,boxes:boxes.filter(b=>b.w>.1&&b.h>.1),opening:{x:cx,y:cy,w:width,h:height,z:-12}};
 }
+// Difficulty adds 50 percentage points per tier relative to the previous escape speed.
+export function escapeProfile(difficulty='rookie'){
+ const multiplier={rookie:1.5,pilot:2,ace:2.5}[difficulty]??1.5;
+ const speed=ESCAPE_SPEED*multiplier;
+ return {speed,duration:ESCAPE_SPEED*ESCAPE_DURATION/speed,multiplier};
+}
+export function yavinLandingPose(time){
+ const u=Math.max(0,Math.min(1,time/10)),e=u*u*(3-2*u),angle=.95-e*1.35;
+ return {ship:{x:0,y:22*(1-e)+1.5,z:15-e*72},camera:{x:Math.sin(angle)*(70-e*18),y:24-e*10,z:-45+Math.cos(angle)*(85-e*20)},look:{x:0,y:5-e*2,z:-20-e*37}};
+}
