@@ -23,7 +23,7 @@ jobs:
       - name: Checkout Mission 03 preview branch
         uses: actions/checkout@v6
         with:
-          ref: cabdc6ff2b140c0d2688d0a7a67b4ba7574e13f9
+          ref: 54d7c2db040f38fc93b9ec78384867f635d33d82
           path: mission-preview
       - name: Test Mission 03 preview
         working-directory: mission-preview
