@@ -2,7 +2,7 @@ import {installMobile} from './mobile.js?v=10';
 import {boxContact,SCRAPE_DAMAGE,SCRAPE_INTERVAL} from './flight-contacts.js?v=9c';
 import {terrainProfile} from './terrain-profile.js';
 import * as THREE from './vendor/three.module.js';
-import {fighter,tie,barge,box,sphere,animateEngines,groundBattery,vaderBoss,reactorBoss,trenchTurret} from './models.js?v=7a';
+import {fighter,tie,barge,box,sphere,animateEngines,groundBattery,vaderBoss,reactorBoss,trenchTurret} from './models.js?v=falcon-2';
 import {createMissionEnvironment} from './mission-environment.js?v=10';
 import {DIFFICULTIES,MISSIONS,bossMotion,bossArmor} from './deployment.js';
 import {HIT_DAMAGE,HIT_GRACE,hitMotion,trenchGunPlacement} from './impact.js';

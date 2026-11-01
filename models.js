@@ -53,20 +53,14 @@ function awing(){let g=new T.Group();g.userData.muzzles=[];loft(g,[[-3.25,.25,.0
 export function falcon(){
  const g=new T.Group();g.name='YT-1300 Millennium Falcon · Endor';
  const hull=material(0xc9c5b9,.24,.87),dark=material(0x383b3b,.5,.82),patch=material(0x88857a,.3,.9);
- // Locally authored UV texture: radial armour, soot and mismatched replacement panels.
- if(typeof document!=='undefined'){
-  const c=document.createElement('canvas');c.width=c.height=1024;const ctx=c.getContext('2d');
-  ctx.fillStyle='#b8b5a9';ctx.fillRect(0,0,1024,1024);let seed=73;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
-  for(let i=0;i<11000;i++){const v=80+Math.floor(rnd()*90);ctx.fillStyle=`rgba(${v},${v},${v-8},.12)`;ctx.fillRect(rnd()*1024,rnd()*1024,1+rnd()*4,1+rnd()*3)}
-  for(let r=65;r<510;r+=43){for(let j=0;j<32;j++){const a=j*Math.PI/16;ctx.beginPath();ctx.arc(512,512,r,a+.008,a+Math.PI/16-.008);ctx.arc(512,512,r-40,a+Math.PI/16-.008,a+.008,true);ctx.closePath();ctx.fillStyle=j%11===0?'#714c43':j%7===0?'#77776f':`rgb(${167+j%5*6},${165+j%5*6},${153+j%5*6})`;ctx.fill();ctx.strokeStyle='#53534e';ctx.lineWidth=2;ctx.stroke()}}
-  for(let i=0;i<90;i++){const x=rnd()*1024,z=rnd()*1024;ctx.fillStyle='rgba(28,25,21,.16)';ctx.fillRect(x,z,2+rnd()*8,5+rnd()*45)}
-  const map=new T.CanvasTexture(c);map.colorSpace=T.SRGBColorSpace;map.anisotropy=4;hull.map=map;hull.bumpMap=map;hull.bumpScale=.035;
- }
+ // Imagegen weathered film-miniature atlas; planar hull UVs follow the large left island.
+ if(typeof document!=='undefined'&&document.createElementNS){const map=new T.TextureLoader().load(new URL('assets/materials/falcon-weathered-atlas.jpg',import.meta.url).href);map.colorSpace=T.SRGBColorSpace;map.anisotropy=4;hull.map=map;hull.bumpMap=map;hull.bumpScale=.025;}
  // Flattened double saucer with planar UVs; no box-shaped mandibles.
- for(const sign of [-1,1]){const saucer=sphere(g,5.8,hull,0,sign*.12,0);saucer.scale.set(1,.145,.92);const pos=saucer.geometry.attributes.position;const uv=saucer.geometry.attributes.uv;const geo=saucer.geometry.clone();for(let i=0;i<pos.count;i++)geo.attributes.uv.setXY(i,pos.getX(i)/11.6+.5,pos.getZ(i)/11.6+.5);saucer.geometry=geo;}
+ for(const sign of [-1,1]){const geo=new T.SphereGeometry(5.8,64,24);const pos=geo.attributes.position;for(let i=0;i<pos.count;i++)geo.attributes.uv.setXY(i,(385-pos.getZ(i)/5.8*375)/1717,1-(408+pos.getX(i)/5.8*375)/916);const saucer=mesh(g,geo,hull,0,sign*.12,0);saucer.scale.set(1,.145,.92);}
+
  const rim=cylinder(g,5.63,5.63,.38,dark);rim.rotation.x=0;rim.scale.z=.92;
  for(const side of [-1,1]){
-  const m=plate(g,[[side*1.15,2.3],[side*4.9,2.3],[side*4.15,8.2],[side*1.15,8.2]],.9,hull);m.rotation.x=-Math.PI/2;m.position.y=-.45;
+  const m=plate(g,[[side*1.15,2.3],[side*4.9,2.3],[side*4.15,8.2],[side*1.15,8.2]],.9,hull);m.rotation.x=-Math.PI/2;m.position.y=-.45;const mp=m.geometry.attributes.position;for(let i=0;i<mp.count;i++)m.geometry.attributes.uv.setXY(i,(800+(mp.getY(i)-2.3)/5.9*700)/1717,1-(side>0?45+(Math.abs(mp.getX(i))-1.15)/3.75*110:210+(Math.abs(mp.getX(i))-1.15)/3.75*130)/916);
   box(g,.26,.2,4.9,dark,side*1.3,.05,-5.5);
   for(let z=-7.6;z<-3;z+=.7)box(g,1.65,.025,.025,dark,side*2.8,.49,z);
   rod(g,[side*4.8,0,.4],[side*6.05,0,.4],.68,patch);const dock=torus(g,.65,.12,hull,side*6.05,0,.4);dock.rotation.y=Math.PI/2;
