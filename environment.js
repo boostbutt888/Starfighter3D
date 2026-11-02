@@ -1,7 +1,7 @@
-import {createStreamAhead} from './stream-ahead.js?v=10';
-import {canyonContacts} from './flight-contacts.js?v=9c';
+import {createStreamAhead} from './stream-ahead.js?v=11';
+import {canyonContacts} from './flight-contacts.js?v=11';
 import * as T from './vendor/three.module.js';
-import {terrainProfile} from './terrain-profile.js';
+import {terrainProfile} from './terrain-profile.js?v=11';
 const LENGTH=160;
 function noise(x,z){return Math.sin(x*.71+z*.041)*.48+Math.sin(x*1.71+z*.103)*.25+Math.sin(x*3.83-z*.219)*.13+Math.sin(x*8.3+z*.431)*.07}
 function random(n){let x=Math.sin(n*127.1+311.7)*43758.54;return x-Math.floor(x)}

@@ -1,5 +1,5 @@
-import {stickVector} from './flight-contacts.js?v=9c';
-import {bindTap,bindHold,fullscreenRoute} from './touch-actions.js?v=10';
+import {stickVector} from './flight-contacts.js?v=11';
+import {bindTap,bindHold,fullscreenRoute} from './touch-actions.js?v=11';
 export function installMobile({playing,onWeapon,onBomb,onFire,onUnlock,onPause}){const touch=matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>0;document.body.classList.toggle('touchDevice',touch);const stick=document.getElementById('flightStick'),thumb=document.getElementById('stickThumb'),vector={x:0,y:0};let active=null,origin=null,auto=true;
  const releaseFire=bindHold(document.getElementById('fireButton'),()=>{if(playing()){onUnlock();onFire(true)}},()=>onFire(false));
  function resetStick(){active=null;vector.x=vector.y=0;thumb.style.transform='translate(-50%,-50%)';stick.classList.remove('held')}

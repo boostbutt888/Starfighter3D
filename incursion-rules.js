@@ -1,3 +1,4 @@
+import {tierMultiplier} from './campaign.js?v=11';
 export const TUNNEL_SPEED=36; // +50% over the original 24 units/s
 export const ESCAPE_SPEED=36; // +50% over the original, matching entry
 export const ESCAPE_DURATION=36;
@@ -18,7 +19,7 @@ export function tunnelLayout(serial,seed=1){
 }
 // Difficulty adds 50 percentage points per tier relative to the previous escape speed.
 export function escapeProfile(difficulty='rookie'){
- const multiplier={rookie:1.5,pilot:2,ace:2.5}[difficulty]??1.5;
+ const multiplier=1.5*tierMultiplier(difficulty);
  const speed=ESCAPE_SPEED*multiplier;
  return {speed,duration:ESCAPE_SPEED*ESCAPE_DURATION/speed,multiplier};
 }

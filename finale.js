@@ -1,9 +1,9 @@
-import {yavinLandingPose} from './incursion-rules.js';
-import {burstField} from './celebration-particles.js';
+import {yavinLandingPose} from './incursion-rules.js?v=11';
+import {burstField} from './celebration-particles.js?v=11';
 import * as T from './vendor/three.module.js';
-import {createDeathStarII} from './incursion-cinematics.js';
-import {finaleStage} from './terrain-profile.js';
-import {hyperspaceVertex,hyperspaceFragment} from './hyperspace-shader.js';
+import {createDeathStarII} from './incursion-cinematics.js?v=11';
+import {finaleStage} from './terrain-profile.js?v=11';
+import {hyperspaceVertex,hyperspaceFragment} from './hyperspace-shader.js?v=11';
 const clamp=(x)=>T.MathUtils.clamp(x,0,1),ease=x=>{x=clamp(x);return x*x*(3-2*x)};
 export class Finale{
  constructor(scene,camera,environment,effects,sound,ui={}){Object.assign(this,{scene,camera,environment,effects,sound,ui});this.mission={id:'tatooine',bossName:'KHETANNA',departure:'LEAVING TATOOINE',departureDetail:'CLIMBING THROUGH THE ATMOSPHERE'};this.time=0;this.active=false;this.stage='idle';this.objects=[];this.group=new T.Group();this.group.visible=false;scene.add(this.group);this.starPositions=new Float32Array(1600*3);for(let i=0;i<1600;i++){let z=Math.random()*2-1,a=Math.random()*Math.PI*2,r=Math.sqrt(1-z*z)*750;this.starPositions.set([Math.cos(a)*r,Math.sin(a)*r,z*750],i*3)}let geo=new T.BufferGeometry();geo.setAttribute('position',new T.BufferAttribute(this.starPositions,3));this.stars=new T.Points(geo,new T.PointsMaterial({color:0xe1eaff,size:1.1,sizeAttenuation:true,transparent:true,opacity:0,depthWrite:false,fog:false,toneMapped:false}));this.group.add(this.stars);

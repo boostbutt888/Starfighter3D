@@ -13,3 +13,5 @@ Sources:
 - https://scifi.stackexchange.com/questions/268491/when-lando-refers-to-the-north-tower-in-return-of-the-jedi-how-can-one-deter (secondary reference reproducing Complete Locations reactor diagram/context)
 
 Validation: syntax checks on changed modules; 8 mobile tests pass; reactor fixed-pose assertion passes. Full mechanics tests and visual/browser QA remain pending: the connector could not transfer the vendored 1.3 MB Three.js module to this workspace. Do not treat this as visually approved or deploy it without previewing.
+
+November 2026 correction: fixed the reversed forward mandibles, narrowed outer tip width from 4.9 at the roots to 2.8 at the nose, tapered vertical thickness, opened the central notch, and aligned the circular dish concave face/feed toward -Z (slightly raised). Blue engine illumination and thrust occupy only the rear +Z arc. Film references above guide the silhouette; no 100% film accuracy claim is made.

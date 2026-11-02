@@ -1,4 +1,4 @@
-import {obstacleContact,tunnelSegmentZ,tunnelLayout} from './incursion-rules.js';
+import {obstacleContact,tunnelSegmentZ,tunnelLayout} from './incursion-rules.js?v=11';
 import * as T from './vendor/three.module.js';
 // Lightweight, recyclable Death Star II interior corridor. All geometry is local to this mission.
 export function createReactorTunnel(group){

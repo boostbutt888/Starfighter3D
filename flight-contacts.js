@@ -1,4 +1,4 @@
-import {terrainProfile} from './terrain-profile.js';
+import {terrainProfile} from './terrain-profile.js?v=11';
 export const SCRAPE_DAMAGE=5,SCRAPE_INTERVAL=.8;
 const noise=(x,z)=>Math.sin(x*.71+z*.041)*.48+Math.sin(x*1.71+z*.103)*.25+Math.sin(x*3.83-z*.219)*.13+Math.sin(x*8.3+z*.431)*.07;
 export function canyonWallAt(s,y,side){const p=terrainProfile(s),height=p.height*(1+Math.sin(s*.009+side*1.8)*.24)+Math.sin(s*.017)*7+Math.sin(s*.039+side)*4,t=(y+4)/height,ledge=p.shelf*Math.sin(y*(.42+Math.sin(s*.003)*.1)+Math.sin(s*.012)*.3)+.3*Math.sin(y*2.1),erosion=2.5*noise(y*.3,s)+Math.sin(s*.22)*Math.sin(y*.4),buttress=4*(.5+.5*Math.sin(s*.075+side))**4;return side*(p.width+15*t**3+6*Math.exp(-t*10)+ledge+erosion-buttress)+p.center}

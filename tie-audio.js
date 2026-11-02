@@ -1,4 +1,4 @@
-import {tieProximity} from './impact.js';
+import {tieProximity} from './impact.js?v=11';
 // Original synthesized ion-engine howl, with distance, stereo motion and Doppler shift.
 export class TieFlybys{
  constructor(){this.voices=new Map();this.buffer=null;this.context=null}

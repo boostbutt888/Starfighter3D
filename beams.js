@@ -1,5 +1,5 @@
 import * as T from './vendor/three.module.js';
-import {beamPhase,distanceToSegment} from './combat.js';
+import {beamPhase,distanceToSegment} from './combat.js?v=11';
 const unit=new T.CylinderGeometry(1,1,1,10);
 export class BossBeams{
  constructor(scene,onHit,sound){Object.assign(this,{scene,onHit,sound});this.beams=[];this.warningTime=.8;this.color=0xff3927;}

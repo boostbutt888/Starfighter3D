@@ -1,6 +1,6 @@
 // Sampled orchestral performance of the 1978 Battlestar Galactica theme.
-import {TieFlybys} from './tie-audio.js';
-import {THEME_BARS,THEME_ROOTS,themeEvents} from './bsg-theme.js';
+import {TieFlybys} from './tie-audio.js?v=11';
+import {THEME_BARS,THEME_ROOTS,themeEvents} from './bsg-theme.js?v=11';
 const banks={string_ensemble_1:[48,60,72,84],french_horn:[48,55,60,67],trumpet:[60,67,72],trombone:[36,48,60],contrabass:[36,48],timpani:[36,43],orchestral_harp:[60,72]};
 const noteName=n=>['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'][n%12]+(Math.floor(n/12)-1);
 export class FlightAudio {

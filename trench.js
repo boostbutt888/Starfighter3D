@@ -1,8 +1,8 @@
-import {createStreamAhead} from './stream-ahead.js?v=10';
-import {boxContact} from './flight-contacts.js?v=9c';
+import {createStreamAhead} from './stream-ahead.js?v=11';
+import {boxContact} from './flight-contacts.js?v=11';
 import * as T from './vendor/three.module.js';
-import {imperialMaterials} from './models.js?v=7a';
-import {TRENCH_LENGTH as LENGTH,trenchRandom as random,trenchProfile,trenchSection} from './trench-layout.js';
+import {imperialMaterials} from './models.js?v=11';
+import {TRENCH_LENGTH as LENGTH,trenchRandom as random,trenchProfile,trenchSection} from './trench-layout.js?v=11';
 export function createTrench(scene,renderer){const root=new T.Group();scene.add(root);const unit=new T.BoxGeometry(1,1,1),wedge=unit.clone();for(let i=0;i<wedge.attributes.position.count;i++)if(wedge.attributes.position.getY(i)>0)wedge.attributes.position.setX(i,wedge.attributes.position.getX(i)*.35);wedge.computeVertexNormals();const pipe=new T.CylinderGeometry(.5,.5,1,10);pipe.rotateX(Math.PI/2);
  const source=imperialMaterials().frame;
  const metal=(color)=>{const m=new T.MeshStandardMaterial({color,roughness:.86,metalness:.18,map:source.map,bumpMap:source.map,bumpScale:.018});m.onBeforeCompile=shader=>{

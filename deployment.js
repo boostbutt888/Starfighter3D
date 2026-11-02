@@ -1,7 +1,7 @@
 export const DIFFICULTIES={
- rookie:{name:'ROOKIE',incoming:.6,projectile:.78,fireRate:.72,bossRate:.75,armor:.75,enemyArmor:.85,flightRate:.86,waveInterval:8.2,beamWarning:1.15,coreOpen:5,motion:.8,score:.75},
- pilot:{name:'PILOT',incoming:1,projectile:1,fireRate:1,bossRate:1,armor:1,enemyArmor:1,flightRate:1,waveInterval:6.5,beamWarning:.8,coreOpen:4.2,motion:1,score:1},
- ace:{name:'ACE',incoming:1.2,projectile:1.22,fireRate:1.35,bossRate:1.4,armor:1.3,enemyArmor:1.25,flightRate:1.14,waveInterval:4.8,beamWarning:.6,coreOpen:3.5,motion:1.2,score:1.5}
+ rookie:{name:'ROOKIE',incoming:.6,projectile:.78,fireRate:.72,bossRate:.75,armor:.75,enemyArmor:.85,flightRate:1,waveInterval:6.5,beamWarning:1.15,coreOpen:5,motion:.8,score:.75},
+ pilot:{name:'PILOT',incoming:1,projectile:1,fireRate:1,bossRate:1,armor:1,enemyArmor:1,flightRate:1.5,waveInterval:6.5,beamWarning:.8,coreOpen:4.2,motion:1,score:1},
+ ace:{name:'ACE',incoming:1.2,projectile:1.22,fireRate:1.35,bossRate:1.4,armor:1.3,enemyArmor:1.25,flightRate:2.25,waveInterval:6.5,beamWarning:.6,coreOpen:3.5,motion:1.2,score:1.5}
 };
 export const MISSIONS={
  tatooine:{id:'tatooine',number:'01',name:'TATOOINE RUN',title:'TATOOINE<br><em>RUN.</em>',intro:'Two suns. No backup. One way through.<br>Take the canyon, break the blockade, bring down the barge.',location:'OUTER RIM / TATOOINE',bossName:'THE KHETANNA',bossScale:1.4,coreArmor:600,coreRadius:4.6,turretRadius:2.3,approach:67,departure:'LEAVING TATOOINE',departureDetail:'CLIMBING THROUGH THE ATMOSPHERE',neutralized:'Khetanna destroyed',objective:'Break through the Imperial patrol and ground batteries',phase:'CANYON APPROACH'},

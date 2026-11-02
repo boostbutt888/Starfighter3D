@@ -109,3 +109,13 @@ Touch weapon and bomb actions fire on pointer-down with duplicate-click suppress
 Phones render at up to 60 fps with a lower pixel ratio, cheaper antialiasing/shadows, and less frequent HUD text updates. Explosions reuse two permanent lights so kills do not change shader light counts. The next canyon/trench section is prepared in idle time before the recycling boundary.
 
 **FULL SCREEN** requests native full screen where supported. Safari on iPhone may not support full screen for arbitrary game elements; the button then explains Safari → Share → Add to Home Screen → Open as Web App. The manifest and Apple web-app metadata support launching without browser bars from the Home Screen. This does not install an offline cache; loading the game still needs a connection. See [Apple’s Home Screen web-app guide](https://support.apple.com/guide/iphone/iphea86e5236/ios) and [WebKit’s audio-session issue](https://bugs.webkit.org/show_bug.cgi?id=237322).
+
+## Campaign update
+
+Three fighters per campaign, shared across Tatooine → Trench Run → Death Star II Incursion. A fatal hit explodes the craft; a replacement arrives after two seconds with full hull and three seconds of protection, preserving encounter progress and weapon upgrades. All lives exhausted ends the run. Completed levels advance automatically; the final Yavin victory ends the campaign.
+
+Rookie/Pilot/Ace use 1×/1.5×/2.25× scroll speed and encounter density. Reactor escape retains its faster base speed with the same tier ratios and route length. Only P (spread) and L (laser) pickups remain; hull takes damage directly.
+
+Keyboard: WASD/arrows steer; Space fires; C switches weapon; B drops a bomb; U toggles music; I toggles SFX; O mutes/restores the previous audio mix; P or Escape pauses.
+
+Falcon revision: forward-pointing tapered mandibles, open cargo notch, forward-facing circular dish, corrected hull UV mapping, and a pulsing blue rear ion strip/thrust rendered in two batches. References: StarWars.com Millennium Falcon Databank and Ships of the Galaxy. This remains an original game model, not a claim of exact film-mesh accuracy.

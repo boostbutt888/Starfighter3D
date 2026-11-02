@@ -55,14 +55,20 @@ export function falcon(){
  const hull=material(0xc9c5b9,.24,.87),dark=material(0x383b3b,.5,.82),patch=material(0x88857a,.3,.9);
  // Imagegen weathered film-miniature atlas; planar hull UVs follow the large left island.
  if(typeof document!=='undefined'&&document.createElementNS){const map=new T.TextureLoader().load(new URL('assets/materials/falcon-weathered-atlas.jpg',import.meta.url).href);map.colorSpace=T.SRGBColorSpace;map.anisotropy=4;hull.map=map;hull.bumpMap=map;hull.bumpScale=.025;}
- // Flattened double saucer with planar UVs; no box-shaped mandibles.
- for(const sign of [-1,1]){const geo=new T.SphereGeometry(5.8,64,24);const pos=geo.attributes.position;for(let i=0;i<pos.count;i++)geo.attributes.uv.setXY(i,(385-pos.getZ(i)/5.8*375)/1717,1-(408+pos.getX(i)/5.8*375)/916);const saucer=mesh(g,geo,hull,0,sign*.12,0);saucer.scale.set(1,.145,.92);}
-
- const rim=cylinder(g,5.63,5.63,.38,dark);rim.rotation.x=0;rim.scale.z=.92;
+ // Double saucer with a real open cargo notch, both mandibles point forward (-Z).
+ const outline=[[-1.15,2.4],[-1.15,5.23]];
+ for(let i=1;i<64;i++){const a=-Math.PI/2-.2-i*(Math.PI*2-.4)/64;outline.push([Math.cos(a)*5.8,-Math.sin(a)*5.34])}
+ outline.push([1.15,5.23],[1.15,2.4]);
+ const saucer=plate(g,outline,.48,hull);saucer.name='Notched double saucer';saucer.rotation.x=-Math.PI/2;saucer.position.y=-.24;const sp=saucer.geometry.attributes.position;for(let i=0;i<sp.count;i++)saucer.geometry.attributes.uv.setXY(i,(385+sp.getY(i)/5.8*375)/1717,1-(408+sp.getX(i)/5.8*375)/916);
+ // Raised upper and lower central hulls leave the cargo notch completely open.
+ for(const sign of [-1,1]){const dome=sphere(g,4.1,hull,0,sign*.16,1.5);dome.scale.set(1,.15,.88);const dp=dome.geometry.attributes.position;for(let i=0;i<dp.count;i++)dome.geometry.attributes.uv.setXY(i,(385-(dp.getZ(i)*.88+1.5)/5.8*375)/1717,1-(408+dp.getX(i)/5.8*375)/916)}
  for(const side of [-1,1]){
-  const m=plate(g,[[side*1.15,2.3],[side*4.9,2.3],[side*4.15,8.2],[side*1.15,8.2]],.9,hull);m.rotation.x=-Math.PI/2;m.position.y=-.45;const mp=m.geometry.attributes.position;for(let i=0;i<mp.count;i++)m.geometry.attributes.uv.setXY(i,(800+(mp.getY(i)-2.3)/5.9*700)/1717,1-(side>0?45+(Math.abs(mp.getX(i))-1.15)/3.75*110:210+(Math.abs(mp.getX(i))-1.15)/3.75*130)/916);
-  box(g,.26,.2,4.9,dark,side*1.3,.05,-5.5);
-  for(let z=-7.6;z<-3;z+=.7)box(g,1.65,.025,.025,dark,side*2.8,.49,z);
+  const m=plate(g,[[side*1.15,2.4],[side*4.9,2.4],[side*2.8,8.2],[side*1.15,8.2]],.75,hull);m.name=side<0?'Port forward mandible':'Starboard forward mandible';m.rotation.x=-Math.PI/2;m.position.y=-.375;
+  const mp=m.geometry.attributes.position;for(let i=0;i<mp.count;i++){mp.setZ(i,(mp.getZ(i)-.375)*(1-(mp.getY(i)-2.4)/5.8*.55)+.375);m.geometry.attributes.uv.setXY(i,(800+(mp.getY(i)-2.3)/5.9*700)/1717,1-(side>0?45+(Math.abs(mp.getX(i))-1.15)/3.75*110:210+(Math.abs(mp.getX(i))-1.15)/3.75*130)/916)}m.geometry.computeVertexNormals();
+  box(g,.12,.25,5.65,dark,side*1.2,0,-5.35);
+  for(let z=-7.8;z<-3;z+=.65)box(g,1.85,.025,.035,dark,side*2.4,.39,z);
+  for(const z of [-4.1,-6.35]){const well=cylinder(g,.48,.48,.035,dark,side*2.7,.402,z);well.rotation.x=0;const rim=torus(g,.49,.055,patch,side*2.7,.425,z);rim.rotation.x=Math.PI/2;for(let i=-1;i<=1;i++)box(g,.72,.035,.055,patch,side*2.7,.44,z+i*.15)}
+  const lamp=sphere(g,.12,new T.MeshBasicMaterial({color:0xd6f5ff,toneMapped:false}),side*1.95,0,-8.23);lamp.scale.set(1,.6,.3);
   rod(g,[side*4.8,0,.4],[side*6.05,0,.4],.68,patch);const dock=torus(g,.65,.12,hull,side*6.05,0,.4);dock.rotation.y=Math.PI/2;
  }
  // Starboard cockpit corridor and framed cylindrical canopy, facing forward (-Z).
@@ -71,10 +77,20 @@ export function falcon(){
  for(let i=0;i<8;i++){const a=i*Math.PI/4;rod(g,[6.15+Math.cos(a)*.59,.15+Math.sin(a)*.59,-5.05],[6.15+Math.cos(a)*.59,.15+Math.sin(a)*.59,-4.15],.035,hull)}
  for(let y of [-1,1]){const turret=sphere(g,.86,patch,0,y,.1);turret.scale.y=.43;for(let x of [-.16,.16])for(let dy of [-.12,.12])cylinder(g,.045,.065,1.65,dark,x,y+dy,-.95)}
  for(let i=0;i<6;i++){const a=.22+i*Math.PI/5.8;const x=Math.cos(a)*3.6,z=Math.sin(a)*3.6;const fan=cylinder(g,.68,.68,.09,dark,x,.77,z);fan.rotation.x=0;for(let j=0;j<6;j++){const blade=box(g,1.1,.025,.065,patch,x,.83,z);blade.rotation.y=j*Math.PI/6}}
- cylinder(g,.23,.4,.7,dark,-2.8,1.05,-.5).rotation.x=0;
- const dish=new T.Mesh(new T.SphereGeometry(1.05,24,10,0,Math.PI*2,0,.9),hull);dish.position.set(-2.8,1.35,-.5);dish.rotation.x=-.45;g.add(dish);rod(g,[-2.8,1.45,-.5],[-2.8,2.45,-.9],.04,dark);
- const blue=new T.MeshBasicMaterial({color:0x8ddfff,toneMapped:false});
- const engine=new T.Mesh(new T.TorusGeometry(5.35,.18,6,36,Math.PI*.72),blue);engine.rotation.x=Math.PI/2;engine.rotation.z=Math.PI*.14;engine.scale.y=.92;engine.position.y=.02;g.add(engine);
+ // Original-trilogy circular rectenna: concave face and feed point forward, slightly up.
+ const dishMount=new T.Group();dishMount.name='Forward-facing circular sensor dish';dishMount.position.set(-2.8,1.55,-.5);dishMount.quaternion.setFromUnitVectors(new T.Vector3(0,0,1),new T.Vector3(0,.42,-1).normalize());g.add(dishMount);
+ rod(g,[-2.8,.65,-.3],[-2.8,1.55,-.5],.14,dark);
+ const dishGeo=new T.BufferGeometry(),dishPos=[],dishIdx=[],dishUV=[];const rings=10,sectors=40;
+ for(let r=0;r<=rings;r++)for(let j=0;j<=sectors;j++){const radius=r/rings*1.05,a=j/sectors*Math.PI*2;dishPos.push(radius*Math.cos(a),radius*Math.sin(a),.26*(radius/1.05)**2);dishUV.push(j/sectors,r/rings)}
+ for(let r=0;r<rings;r++)for(let j=0;j<sectors;j++){const a=r*(sectors+1)+j,b=a+sectors+1;dishIdx.push(a,b,a+1,b,b+1,a+1)}
+ dishGeo.setAttribute('position',new T.Float32BufferAttribute(dishPos,3));dishGeo.setAttribute('uv',new T.Float32BufferAttribute(dishUV,2));dishGeo.setIndex(dishIdx);dishGeo.computeVertexNormals();const dishMaterial=hull.clone();dishMaterial.side=T.DoubleSide;mesh(dishMount,dishGeo,dishMaterial);torus(dishMount,1.05,.045,patch,0,0,.26);
+ for(let i=0;i<3;i++){const a=i*Math.PI*2/3;rod(dishMount,[Math.cos(a)*.95,Math.sin(a)*.95,.23],[0,0,.8],.025,dark)}sphere(dishMount,.1,patch,0,0,.8);
+ // Rear-only blue ion strip and broad translucent thrust, never wrapped onto the nose.
+ const blue=new T.MeshBasicMaterial({color:0x91e8ff,toneMapped:false,side:T.DoubleSide});g.userData.blueThrust=[];
+ function thrustGeometry(wake=false){const positions=[],indices=[];for(let i=0;i<=40;i++){const a=.22+i*(Math.PI-.44)/40,x=Math.cos(a)*5.68,z=Math.sin(a)*5.22;if(wake)positions.push(x,0,z,x,0,z+1.35);else positions.push(x,-.16,z,x,.16,z);if(i<40){const n=i*2;indices.push(n,n+1,n+2,n+1,n+3,n+2)}}const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(positions,3));geo.setIndex(indices);geo.computeVertexNormals();return geo}
+ const strip=mesh(g,thrustGeometry(),blue);strip.name='Blue rear ion-engine strip';
+ const glow=new T.MeshBasicMaterial({color:0x168bff,transparent:true,opacity:.32,blending:T.AdditiveBlending,depthWrite:false,toneMapped:false,side:T.DoubleSide});
+ const plume=mesh(g,thrustGeometry(true),glow);plume.name='Blue ion thrust';g.userData.blueThrust.push(plume);
  for(let i=0;i<34;i++){const a=i*Math.PI*2/34;if(Math.sin(a)<-.35)continue;const x=Math.cos(a)*5.65,z=Math.sin(a)*5.2;box(g,.22,.3,.3,patch,x,0,z)}
  g.userData.muzzles=[new T.Vector3(-2.8,.4,-8.2),new T.Vector3(2.8,.4,-8.2),new T.Vector3(0,1,-1.7)];g.userData.large=true;return g
 }
@@ -107,7 +123,7 @@ for(let i=0;i<10;i++){let pivot=new T.Group(),s=i%2?1:-1,z=-8+Math.floor(i/2)*4;
 const core=box(g,2.3,.7,.12,new T.MeshStandardMaterial({color:0xd86e31,emissive:0xff8033,emissiveIntensity:1.2}),0,5.3,13.58);g.userData.core=core;
 const shield=new T.Mesh(new T.SphereGeometry(3.4,24,16),new T.MeshBasicMaterial({color:0x76baff,transparent:true,opacity:0,wireframe:false,depthWrite:false}));shield.position.set(0,4.7,10.8);g.add(shield);g.userData.coreShield=shield;
 g.userData.corePosition=new T.Vector3(0,4.8,11.5);g.userData.burstPosition=new T.Vector3(0,4.8,12);g.userData.beamPorts=[new T.Vector3(-3.2,4.5,13),new T.Vector3(3.2,4.5,13)];g.rotation.y=.42;return g}
-export function animateEngines(g,t){g.traverse(o=>{if(o.material===engineMat)o.scale.setScalar(.94+Math.sin(t*37)*.06)})}
+export function animateEngines(g,t){g.traverse(o=>{if(o.material===engineMat)o.scale.setScalar(.94+Math.sin(t*37)*.06)});for(const o of g.userData.blueThrust??[]){o.scale.z=.9+Math.sin(t*31)*.1;o.material.opacity=.27+Math.sin(t*23)*.04}}
 export function groundBattery(){const root=new T.Group();root.name='Imperial ground laser battery';let plinth=cylinder(root,2.5,3.1,1,steel,0,.5,0);plinth.rotation.x=0;box(root,3.3,.7,3.5,frame,0,1.1,0);for(let s of [-1,1]){box(root,.45,.85,4.1,steel,s*1.85,.7,0);box(root,.15,.35,1.4,red,s*2.1,1,0)}const head=new T.Group();head.position.y=1.75;root.add(head);sphere(head,1.05,frame,0,0,0).scale.y=.6;box(head,1.7,.65,1.6,steel,0,.3,0);let barrels=[];for(let x of [-.46,.46]){barrels.push(cylinder(head,.14,.2,3.3,frame,x,.45,1.5));cylinder(head,.2,.2,.24,steel,x,.45,3.2)}let lamp=sphere(head,.14,new T.MeshBasicMaterial({color:0x50ff73,toneMapped:false}),0,.77,.5);root.userData.head=head;root.userData.barrels=barrels;root.userData.lamp=lamp;root.userData.muzzles=[new T.Vector3(-.46,.45,3.4),new T.Vector3(.46,.45,3.4)];return root}
 export function imperialMaterials(){return {frame,steel,black}}
 export function vaderBoss(){const g=new T.Group();g.name='Darth Vader · TIE Advanced x1';g.userData.turrets=[];g.userData.muzzles=[];g.userData.breakupMeshes=[];
