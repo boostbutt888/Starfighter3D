@@ -50,8 +50,36 @@ function panels(g,x,y,z,w,d,m=steel){for(let i=0;i<4;i++)box(g,w/5,.025,d,m,x-w*
 function xwing(){let g=new T.Group();g.userData.muzzles=[];loft(g,[[-6.9,.07,.06,0],[-5.5,.23,.15,0],[-2.3,.46,.29,0],[.1,.63,.5,0],[2.4,.55,.43,0],[2.8,.4,.32,0]],paint,8);loft(g,[[-6.45,.06,.012,.13],[-3.4,.13,.012,.24],[-1.5,.16,.012,.3]],red,4);canopy(g,[[-1.7,.35,.08,.28],[-.8,.4,.43,.35],[.35,.4,.39,.35],[.8,.4,.08,.35]]);astromech(g,0,.6,1.15);panels(g,0,.52,2,.7,.8);for(let s of [-1,1])for(let u of [-1,1]){let w=new T.Group();g.add(w);w.position.set(s*.42,u*.18,1.2);w.rotation.z=s*u*.24;let wing=plate(w,[[s*.1,-1.35],[s*4.45,-.4],[s*4.45,.55],[s*.1,.85]],.12,paint);wing.rotation.x=Math.PI/2;wing.position.y=.06;let stripe=plate(w,[[s*2.3,-.88],[s*3.2,-.68],[s*3.2,.56],[s*2.3,.68]],.13,red);stripe.rotation.x=Math.PI/2;stripe.position.y=.065;for(let j=0;j<3;j++)box(w,.24,.018,.33,steel,s*(3.45+j*.29),.08,.22);cylinder(w,.41,.36,1.8,paint,s*.78,0,-.1);cylinder(w,.3,.32,1.5,steel,s*.78,0,1.05);cylinder(w,.32,.32,.06,black,s*.78,0,-1.03);for(let j=0;j<5;j++)torus(w,.32,.025,frame,s*.78,0,.5+j*.15);exhaust(w,s*.78,0,1.87,.25);cylinder(w,.13,.13,1.1,paint,s*4.45,0,-.15);cylinder(w,.055,.075,3.1,frame,s*4.45,0,-1.7);cylinder(w,.1,.1,.28,steel,s*4.45,0,-3.35);box(w,.45,.055,.24,paint,s*4.45,0,-2.5);g.userData.muzzles.push(new T.Vector3(s*.42+s*4.45*Math.cos(.24),u*.18+u*4.45*Math.sin(.24),-2.3))}return g}
 function ywing(){let g=new T.Group();g.userData.muzzles=[];loft(g,[[-4.3,.6,.22,0],[-3.8,.95,.37,0],[-2.3,.9,.5,0],[-1.25,.5,.33,0],[-.8,.34,.24,0]],paint,8);loft(g,[[-4.3,.27,.025,.22],[-3.8,.32,.025,.38],[-2.8,.29,.025,.49]],yellow,4);canopy(g,[[-3.1,.53,.08,.3],[-2.65,.53,.35,.45],[-1.8,.36,.32,.4],[-1.5,.3,.05,.3]]);box(g,.85,.4,4,steel,0,-.03,1);box(g,4.4,.2,.7,paint,0,0,.45);astromech(g,0,.3,-.75);for(let i=0;i<6;i++){box(g,.62,.12,.18,frame,0,.3,-.25+i*.54);rod(g,[-.28,.4,i*.5],[.3,.4,i*.5+.5],.04,yellow)}for(let s of [-1,1]){for(let j=0;j<3;j++)rod(g,[s*(.16+j*.12),.26,-.5],[s*(.16+j*.12),.26,2.7],.025,j%2?copper:frame);cylinder(g,.6,.6,2.3,paint,s*2.45,0,-.8);let cap=sphere(g,.6,paint,s*2.45,0,-1.95);cap.scale.z=.45;torus(g,.6,.05,yellow,s*2.45,0,-1.5);cylinder(g,.36,.39,2.2,steel,s*2.45,0,1.3);for(let j=0;j<4;j++){let a=j*Math.PI/2+Math.PI/4,dx=Math.cos(a)*.47,dy=Math.sin(a)*.47;rod(g,[s*2.45+dx,dy,.1],[s*2.45+dx,dy,4],.065,paint)}torus(g,.66,.09,paint,s*2.45,0,4);torus(g,.53,.04,frame,s*2.45,0,4);exhaust(g,s*2.45,0,2.5,.29);cylinder(g,.065,.065,1.1,frame,s*.38,-.18,-4.45);g.userData.muzzles.push(new T.Vector3(s*.38,-.18,-5))}cylinder(g,.09,.09,1,steel,0,.8,-2.6);return g}
 function awing(){let g=new T.Group();g.userData.muzzles=[];loft(g,[[-3.25,.25,.08,0],[-2.6,1.03,.2,0],[-1,1.55,.33,0],[1.9,1.45,.47,0],[2.4,.9,.38,0]],paint,8);for(let s of [-1,1]){loft(g,[[-3.15,.15,.02,.08],[-1.7,.32,.02,.31],[1.7,.34,.02,.48]],red,4).position.x=s*.46;cylinder(g,.48,.53,2.5,paint,s*1.02,0,1.5);exhaust(g,s*1.02,0,2.82,.39);let fin=plate(g,[[-.65,0],[.5,1.6],[1.2,1.6],[1.45,0]],.12,paint);fin.rotation.y=Math.PI/2;fin.position.set(s*1.28,.2,1.35);let mark=box(g,.14,.65,.3,red,s*1.28,1.12,.7);cylinder(g,.1,.1,1.85,steel,s*1.77,0,-.4);cylinder(g,.06,.08,1.2,frame,s*1.77,0,-1.8);g.userData.muzzles.push(new T.Vector3(s*1.77,0,-2.5))}canopy(g,[[-1.3,.42,.05,.33],[-.65,.48,.55,.4],[.65,.48,.48,.4],[1.2,.35,.05,.36]]);box(g,.9,.15,.65,steel,0,.48,1.65);return g}
+export function falcon(){
+ const g=new T.Group();g.name='YT-1300 Millennium Falcon · Endor';
+ const hull=material(0xc9c5b9,.24,.87),dark=material(0x383b3b,.5,.82),patch=material(0x88857a,.3,.9);
+ // Imagegen weathered film-miniature atlas; planar hull UVs follow the large left island.
+ if(typeof document!=='undefined'&&document.createElementNS){const map=new T.TextureLoader().load(new URL('assets/materials/falcon-weathered-atlas.jpg',import.meta.url).href);map.colorSpace=T.SRGBColorSpace;map.anisotropy=4;hull.map=map;hull.bumpMap=map;hull.bumpScale=.025;}
+ // Flattened double saucer with planar UVs; no box-shaped mandibles.
+ for(const sign of [-1,1]){const geo=new T.SphereGeometry(5.8,64,24);const pos=geo.attributes.position;for(let i=0;i<pos.count;i++)geo.attributes.uv.setXY(i,(385-pos.getZ(i)/5.8*375)/1717,1-(408+pos.getX(i)/5.8*375)/916);const saucer=mesh(g,geo,hull,0,sign*.12,0);saucer.scale.set(1,.145,.92);}
+
+ const rim=cylinder(g,5.63,5.63,.38,dark);rim.rotation.x=0;rim.scale.z=.92;
+ for(const side of [-1,1]){
+  const m=plate(g,[[side*1.15,2.3],[side*4.9,2.3],[side*4.15,8.2],[side*1.15,8.2]],.9,hull);m.rotation.x=-Math.PI/2;m.position.y=-.45;const mp=m.geometry.attributes.position;for(let i=0;i<mp.count;i++)m.geometry.attributes.uv.setXY(i,(800+(mp.getY(i)-2.3)/5.9*700)/1717,1-(side>0?45+(Math.abs(mp.getX(i))-1.15)/3.75*110:210+(Math.abs(mp.getX(i))-1.15)/3.75*130)/916);
+  box(g,.26,.2,4.9,dark,side*1.3,.05,-5.5);
+  for(let z=-7.6;z<-3;z+=.7)box(g,1.65,.025,.025,dark,side*2.8,.49,z);
+  rod(g,[side*4.8,0,.4],[side*6.05,0,.4],.68,patch);const dock=torus(g,.65,.12,hull,side*6.05,0,.4);dock.rotation.y=Math.PI/2;
+ }
+ // Starboard cockpit corridor and framed cylindrical canopy, facing forward (-Z).
+ rod(g,[3.6,.12,-1.4],[6.15,.12,-2.7],.62,hull);cylinder(g,.67,.62,2.5,hull,6.15,.12,-3.25);
+ cylinder(g,.58,.58,.9,glass,6.15,.15,-4.6);torus(g,.59,.055,hull,6.15,.15,-5.05);
+ for(let i=0;i<8;i++){const a=i*Math.PI/4;rod(g,[6.15+Math.cos(a)*.59,.15+Math.sin(a)*.59,-5.05],[6.15+Math.cos(a)*.59,.15+Math.sin(a)*.59,-4.15],.035,hull)}
+ for(let y of [-1,1]){const turret=sphere(g,.86,patch,0,y,.1);turret.scale.y=.43;for(let x of [-.16,.16])for(let dy of [-.12,.12])cylinder(g,.045,.065,1.65,dark,x,y+dy,-.95)}
+ for(let i=0;i<6;i++){const a=.22+i*Math.PI/5.8;const x=Math.cos(a)*3.6,z=Math.sin(a)*3.6;const fan=cylinder(g,.68,.68,.09,dark,x,.77,z);fan.rotation.x=0;for(let j=0;j<6;j++){const blade=box(g,1.1,.025,.065,patch,x,.83,z);blade.rotation.y=j*Math.PI/6}}
+ cylinder(g,.23,.4,.7,dark,-2.8,1.05,-.5).rotation.x=0;
+ const dish=new T.Mesh(new T.SphereGeometry(1.05,24,10,0,Math.PI*2,0,.9),hull);dish.position.set(-2.8,1.35,-.5);dish.rotation.x=-.45;g.add(dish);rod(g,[-2.8,1.45,-.5],[-2.8,2.45,-.9],.04,dark);
+ const blue=new T.MeshBasicMaterial({color:0x8ddfff,toneMapped:false});
+ const engine=new T.Mesh(new T.TorusGeometry(5.35,.18,6,36,Math.PI*.72),blue);engine.rotation.x=Math.PI/2;engine.rotation.z=Math.PI*.14;engine.scale.y=.92;engine.position.y=.02;g.add(engine);
+ for(let i=0;i<34;i++){const a=i*Math.PI*2/34;if(Math.sin(a)<-.35)continue;const x=Math.cos(a)*5.65,z=Math.sin(a)*5.2;box(g,.22,.3,.3,patch,x,0,z)}
+ g.userData.muzzles=[new T.Vector3(-2.8,.4,-8.2),new T.Vector3(2.8,.4,-8.2),new T.Vector3(0,1,-1.7)];g.userData.large=true;return g
+}
 export function fighter(type=0){let g; // Muzzles are defined in craft-local space, pointing toward -Z.
- g=[xwing,ywing,awing][type]();g.name=['T-65 X-wing','BTL-A4 Y-wing','RZ-1 A-wing'][type];return g}
+ g=[xwing,ywing,awing,falcon][type]();g.name=['T-65 X-wing','BTL-A4 Y-wing','RZ-1 A-wing','YT-1300 Millennium Falcon'][type];return g}
 
 let solarMaterial;
 function solar(){if(solarMaterial)return solarMaterial;let c=document.createElement('canvas');c.width=c.height=128;let x=c.getContext('2d');x.fillStyle='#101925';x.fillRect(0,0,128,128);for(let i=0;i<128;i+=4){x.fillStyle=i%16===0?'#374454':'#202c3a';x.fillRect(i,0,1,128)}for(let i=0;i<128;i+=16){x.fillStyle='#424c56';x.fillRect(0,i,128,1)}let tex=new T.CanvasTexture(c);tex.wrapS=tex.wrapT=T.RepeatWrapping;tex.repeat.set(2,2);tex.colorSpace=T.SRGBColorSpace;solarMaterial=new T.MeshStandardMaterial({map:tex,color:0x8796aa,metalness:.3,roughness:.7,side:T.DoubleSide});return solarMaterial}
@@ -98,3 +126,18 @@ export function trenchTurret(wall=false){const root=new T.Group();root.name=wall
  for(let x of [-.86,.86]){let gun=new T.Group();head.add(gun);gun.position.set(x,1.5,1.3);let breech=cylinder(gun,.52,.52,1.3,gunmetal,0,0,0);for(let [radius,length,z]of [[.32,1.3,.65],[.25,1.35,1.9],[.17,1.5,3.15]])cylinder(gun,radius,radius,length,gunmetal,0,0,z);for(let z of [.1,.7,1.35,2.1,2.65,3.55])cylinder(gun,z<1.4?.36:.23,z<1.4?.36:.23,.13,plate,0,0,z);cylinder(gun,.14,.19,.25,black,0,0,3.95);barrels.push(gun);for(let z of [-.8,-.4,0,.4])box(head,.35,.06,.16,gunmetal,x,2.57,z)}
  for(let side of [-1,1]){box(head,.07,1.4,1.3,gunmetal,side*2.01,1,-.4);for(let j=0;j<5;j++)box(head,.09,.07,.8,black,side*2.06,.65+j*.2,-.4);box(head,.9,.12,1.4,plate,side*.9,2.59,-.45)}
  const lamp=sphere(head,.075,new T.MeshBasicMaterial({color:0xff6847,toneMapped:false}),0,2.38,1.7);root.userData.head=head;root.userData.barrels=barrels;root.userData.lamp=lamp;root.userData.muzzles=[new T.Vector3(-.86,1.5,5.38),new T.Vector3(.86,1.5,5.38)];root.userData.wall=wall;return root}
+
+export function reactorBoss(){
+ const g=new T.Group();g.name='Death Star II main reactor · polar tower assembly';g.userData.turrets=[];g.userData.muzzles=[];
+ const metal=material(0x777c7a,.6,.75),rib=material(0x303b40,.6,.72);if(surfaceMap){metal.map=surfaceMap;metal.bumpMap=surfaceMap;metal.bumpScale=.07;}
+ // Opposing tapered towers suspend the compact central reactor inside an enormous void.
+ for(const sign of [-1,1]){
+  for(let i=0;i<7;i++){const y=sign*(3+i*1.8),r=1.3+i*.29;const tower=cylinder(g,r,r+.3,1.85,metal,0,y,0);tower.rotation.x=sign>0?0:Math.PI;const collar=cylinder(g,r+.35,r+.35,.22,rib,0,y,0);collar.rotation.x=0;for(let j=0;j<8;j++){const a=j*Math.PI/4;rod(g,[Math.cos(a)*r,y-.8,Math.sin(a)*r],[Math.cos(a)*(r+.26),y+.8,Math.sin(a)*(r+.26)],.07,rib)}}
+  const regulator=cylinder(g,2.5,2.5,.6,metal,0,sign*3,0);regulator.rotation.x=0;
+ }
+ const hot=new T.MeshStandardMaterial({color:0xe3d8c4,emissive:0xffa75e,emissiveIntensity:.65,metalness:.4,roughness:.4});
+ const core=sphere(g,1.7,hot);core.scale.y=.75;
+ for(let i=0;i<12;i++){const a=i*Math.PI/6;rod(g,[Math.cos(a)*2.2,-2.5,Math.sin(a)*2.2],[Math.cos(a)*2.2,2.5,Math.sin(a)*2.2],.12,metal)}
+ for(let i=0;i<20;i++){const a=i*Math.PI/10,r=8.7,y=(i%2?1:-1)*4.5;const pivot=new T.Group();pivot.position.set(Math.cos(a)*r,y,Math.sin(a)*r);g.add(pivot);sphere(pivot,.6,rib);box(pivot,1.1,.55,.9,metal,0,.25,0);for(const x of [-.2,.2])cylinder(pivot,.09,.14,1.8,rib,x,.3,1);const lamp=sphere(pivot,.1,new T.MeshBasicMaterial({color:0xff4c32}),0,.6,.4);g.userData.turrets.push({mesh:pivot,hp:5,fire:1+Math.random()*2,lamp})}
+ g.userData.core=core;g.userData.coreShield=sphere(g,2.4,new T.MeshBasicMaterial({color:0x66cfff,transparent:true,opacity:0,depthWrite:false}));g.userData.corePosition=new T.Vector3(0,0,1.8);g.userData.burstPosition=new T.Vector3();g.userData.beamPorts=[new T.Vector3(-2,0,2),new T.Vector3(2,0,2)];return g
+}

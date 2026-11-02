@@ -1,4 +1,7 @@
+import {yavinLandingPose} from './incursion-rules.js';
+import {burstField} from './celebration-particles.js';
 import * as T from './vendor/three.module.js';
+import {createDeathStarII} from './incursion-cinematics.js';
 import {finaleStage} from './terrain-profile.js';
 import {hyperspaceVertex,hyperspaceFragment} from './hyperspace-shader.js';
 const clamp=(x)=>T.MathUtils.clamp(x,0,1),ease=x=>{x=clamp(x);return x*x*(3-2*x)};
@@ -9,13 +12,44 @@ export class Finale{
   this.jump=new T.Group();this.jump.visible=false;scene.add(this.jump);this.streakData=new Float32Array(750*6);this.starSeeds=[];for(let i=0;i<750;i++){let a=Math.random()*Math.PI*2,r=12+Math.random()*270;this.starSeeds.push({x:Math.cos(a)*r,y:Math.sin(a)*r,z:-30-Math.random()*900})}let sg=new T.BufferGeometry();sg.setAttribute('position',new T.BufferAttribute(this.streakData,3));this.streaks=new T.LineSegments(sg,new T.LineBasicMaterial({color:0xc4e8ff,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,fog:false,toneMapped:false}));this.jump.add(this.streaks);
   const data=new Uint8Array(128*128*4);let seed=33;for(let i=0;i<data.length;i+=4){seed=(seed*1664525+1013904223)>>>0;data[i]=data[i+1]=data[i+2]=seed>>>24;data[i+3]=255}const noiseMap=new T.DataTexture(data,128,128);noiseMap.wrapS=noiseMap.wrapT=T.RepeatWrapping;noiseMap.magFilter=noiseMap.minFilter=T.LinearFilter;noiseMap.needsUpdate=true;
   this.tunnel=new T.Mesh(new T.PlaneGeometry(2,2),new T.ShaderMaterial({transparent:true,depthTest:false,depthWrite:false,uniforms:{time:{value:0},opacity:{value:0},aspect:{value:camera.aspect},noiseMap:{value:noiseMap}},vertexShader:hyperspaceVertex,fragmentShader:hyperspaceFragment}));this.tunnel.frustumCulled=false;this.tunnel.renderOrder=1;this.jump.add(this.tunnel);this.streaks.renderOrder=2;this.streaks.material.depthTest=false;
+  this.station=createDeathStarII();this.deathStar=this.station.root;this.deathStar.position.set(0,0,-420);this.group.add(this.deathStar);this.blast=new T.Mesh(new T.SphereGeometry(86,40,24),new T.MeshBasicMaterial({color:0xff9e4b,transparent:true,opacity:0,depthWrite:false}));this.blast.position.copy(this.deathStar.position);this.group.add(this.blast);
+  this.debris=[];const shardMat=new T.MeshStandardMaterial({color:0x92999d,roughness:.8,metalness:.35,side:T.DoubleSide,fog:false});
+ if(typeof document!=='undefined'&&document.createElementNS){const m=new T.TextureLoader().load(new URL('assets/materials/death-star-hull-v2.jpg',import.meta.url).href);m.colorSpace=T.SRGBColorSpace;shardMat.map=m;shardMat.bumpMap=m;shardMat.bumpScale=.2;}
+ // Curved armour sections peel from the actual spherical station envelope.
+ for(let i=0;i<40;i++){const lat=Math.floor(i/10),lon=i%10,geo=new T.SphereGeometry(140,6,5,lon*Math.PI/5,Math.PI/5,lat*Math.PI/4,Math.PI/4);geo.computeBoundingBox();const origin=geo.boundingBox.getCenter(new T.Vector3());geo.translate(-origin.x,-origin.y,-origin.z);const m=new T.Mesh(geo,shardMat);m.userData.origin=origin;m.visible=false;this.group.add(m);this.debris.push(m)}
+  this.shock=new T.Mesh(new T.TorusGeometry(1,.045,6,96),new T.MeshBasicMaterial({color:0xffdeb1,transparent:true,opacity:0,depthWrite:false,fog:false,toneMapped:false}));this.shock.position.set(0,0,-420);this.group.add(this.shock);
+  this.base=new T.Group();this.base.visible=false;scene.add(this.base);const stone=new T.MeshStandardMaterial({color:0x827f68,roughness:1}),green=new T.MeshStandardMaterial({color:0x314f2a,roughness:1});
+  const apron=new T.MeshStandardMaterial({color:0xb4b7b1,roughness:.92}),landingMetal=new T.MeshStandardMaterial({color:0x989c97,roughness:.72,metalness:.35});
+ if(typeof document!=='undefined'&&document.createElementNS){const atlas=new T.TextureLoader().load(new URL('assets/materials/yavin-surfaces-v3.jpg',import.meta.url).href);atlas.colorSpace=T.SRGBColorSpace;atlas.anisotropy=4;const assign=(mat,x,y)=>{const map=atlas.clone();map.repeat.set(.49,.49);map.offset.set(x+.005,y+.005);map.needsUpdate=true;mat.map=map;mat.bumpMap=map;mat.bumpScale=.15;};assign(stone,0,.5);assign(apron,.5,.5);assign(landingMetal,0,0);assign(green,.5,0);}
+ this.landingMetal=landingMetal;
+ const ground=new T.Mesh(new T.BoxGeometry(350,2,350),apron);ground.position.set(0,-3,-80);this.base.add(ground);
+ const mortar=new T.MeshStandardMaterial({color:0x364132,roughness:1});
+ for(let i=0;i<7;i++){const width=70-i*8,depth=55-i*6,step=new T.Mesh(new T.BoxGeometry(width,5,depth),stone);step.position.set(0,i*5,-115);this.base.add(step);
+  for(let j=0;j<3;j++){const seam=new T.Mesh(new T.BoxGeometry(width+.05,.065,depth+.05),mortar);seam.position.set(0,i*5-1.8+j*1.4,-115);this.base.add(seam)}
+  for(let x=-width/2+3;x<width/2;x+=6){const seam=new T.Mesh(new T.BoxGeometry(.08,4.9,.06),mortar);seam.position.set(x+(i%2?1.5:0),i*5,-115+depth/2+.035);this.base.add(seam)}
+ }
+ // Deep doorway, lintel and buttresses create real foreground parallax.
+ for(const side of [-1,1]){const pillar=new T.Mesh(new T.BoxGeometry(4,15,8),stone);pillar.position.set(side*14,4,-83);this.base.add(pillar)}
+ const lintel=new T.Mesh(new T.BoxGeometry(32,4,8),stone);lintel.position.set(0,12,-83);this.base.add(lintel);
+ for(let i=0;i<10;i++){const tread=new T.Mesh(new T.BoxGeometry(27,.18,1.6),stone);tread.position.set(0,-1.9,-75-i*1.8);this.base.add(tread)}
+  const door=new T.Mesh(new T.BoxGeometry(22,13,2),new T.MeshBasicMaterial({color:0x111b18}));door.position.set(0,4,-85);this.base.add(door);for(let i=0;i<36;i++){const tree=new T.Mesh(new T.ConeGeometry(5,20,7),green);tree.position.set((i%2?1:-1)*(45+i%7*8),7,-140+Math.floor(i/2)*13);this.base.add(tree)}
+  this.stationSparks=burstField();this.stationSparks.root.position.set(0,0,-420);this.stationSparks.root.visible=false;this.group.add(this.stationSparks.root);
+  this.fireworks=burstField();this.fireworks.root.visible=false;this.base.add(this.fireworks.root);
+  const sky=new T.Mesh(new T.SphereGeometry(750,24,12),new T.MeshBasicMaterial({color:0x162b40,side:T.BackSide,fog:false}));this.base.add(sky);
+  const backdropMat=new T.MeshBasicMaterial({color:0xffffff,fog:false});if(typeof document!=='undefined'&&document.createElementNS){backdropMat.map=new T.TextureLoader().load(new URL('assets/yavin-arrival-v2.jpg',import.meta.url).href);backdropMat.map.colorSpace=T.SRGBColorSpace;}
+  const backdrop=new T.Mesh(new T.PlaneGeometry(480,270),backdropMat);backdrop.position.set(0,85,-235);this.base.add(backdrop);
+  const pad=new T.Mesh(new T.CylinderGeometry(23,25,1,64),landingMetal);pad.position.set(0,-1,-57);this.base.add(pad);
+  for(let i=0;i<28;i++){const a=i*Math.PI/14,lamp=new T.Mesh(new T.SphereGeometry(.3,6,4),new T.MeshBasicMaterial({color:0xffd99a,toneMapped:false}));lamp.position.set(Math.cos(a)*24,-.2,-57+Math.sin(a)*24);this.base.add(lamp)}
+  for(let i=0;i<12;i++){const lamp=new T.Mesh(new T.BoxGeometry(.5,.1,1.2),new T.MeshBasicMaterial({color:0x8cdfff,toneMapped:false}));lamp.position.set(i%2?15:-15,-1.8,20-Math.floor(i/2)*12);this.base.add(lamp)}
+  const landingLight=new T.DirectionalLight(0xffd9af,3);landingLight.position.set(30,65,20);this.base.add(landingLight);this.base.add(new T.HemisphereLight(0xa6d7ff,0x496333,2));
+  this.landingGear=new T.Group();this.base.add(this.landingGear);this.landingGear.visible=false;for(const [x,z]of [[-2.2,1],[2.2,1],[0,-2.7]]){const strut=new T.Mesh(new T.BoxGeometry(.18,1.3,.18),new T.MeshStandardMaterial({color:0x9da7aa,metalness:.7,roughness:.4}));strut.position.set(x,-1.2,z);this.landingGear.add(strut);const foot=new T.Mesh(new T.BoxGeometry(.9,.2,.7),landingMetal);foot.position.set(x,-1.9,z);this.landingGear.add(foot)}
   this.travelDirection=new T.Vector3(0,Math.sin(.85),-Math.cos(.85));
 
  }
- setMission(mission){this.mission=mission;this.planet.material.map=this.environment.sandMap;this.planet.material.color.set(mission.id==='trench'?0xa5afbd:0xcda16e);this.planet.material.needsUpdate=true;}
+ setMission(mission){this.mission=mission;this.planet.material.map=this.environment.sandMap;this.planet.material.color.set(mission.id==='trench'?0xa5afbd:0xcda16e);this.planet.material.needsUpdate=true;this.deathStar.visible=mission.id==='incursion';}
  start(ship,boss,onComplete){this.reset();this.active=true;this.ship=ship;this.boss=boss;this.onComplete=onComplete;this.origin=boss.getWorldPosition(new T.Vector3());this.startShip=ship.position.clone();this.startCamera=this.camera.position.clone();this.startLook=this.origin.clone().add(new T.Vector3(0,3,0));ship.visible=true;this.stage='chain-reaction';this.ui.show?.();this.ui.caption?.('TARGET NEUTRALIZED',this.mission.bossName+' · CRITICAL REACTOR FAILURE');}
- reset(){this.time=0;this.active=false;this.mainExplosion=false;this.pulse=0;this.spaceCamera=null;this.stage='idle';this.group.visible=false;this.jump.visible=false;this.stars.material.opacity=0;this.planet.material.opacity=0;this.atmosphere.material.uniforms.opacity.value=0;this.tunnel.material.uniforms.opacity.value=0;this.camera.fov=56;this.camera.updateProjectionMatrix();this.ui.flash?.(0);this.ui.fade?.(0);this.ui.hide?.();this.environment.setAltitude(0);}
- update(dt){if(!this.active)return;this.time+=dt;const t=this.time,stage=finaleStage(t),previous=this.stage;this.stage=stage;
+ reset(){if(this.landingGear)this.landingGear.visible=false;this.fireworkClock=0;if(this.stationSparks)this.stationSparks.root.visible=false;if(this.fireworks)this.fireworks.root.visible=false;if(this.base)this.base.visible=false;if(this.shock)this.shock.material.opacity=0;for(const m of this.debris||[])m.visible=false;if(this.savedFog!==undefined&&this.scene.fog)this.scene.fog.density=this.savedFog;this.time=0;this.active=false;this.mainExplosion=false;this.pulse=0;this.spaceCamera=null;this.stage='idle';this.group.visible=false;this.jump.visible=false;this.blast.material.opacity=0;this.blast.scale.setScalar(1);this.deathStar.scale.setScalar(1);this.deathStar.visible=false;this.station.shell.visible=true;this.stars.material.opacity=0;this.planet.material.opacity=0;this.atmosphere.material.uniforms.opacity.value=0;this.tunnel.material.uniforms.opacity.value=0;this.camera.fov=56;this.camera.updateProjectionMatrix();this.ui.flash?.(0);this.ui.fade?.(0);this.ui.hide?.();this.environment.setAltitude(0);}
+ update(dt){if(!this.active)return;if(this.mission.id==='incursion'){this.updateIncursion(dt);return}this.time+=dt;const t=this.time,stage=finaleStage(t),previous=this.stage;this.stage=stage;
   if(t<1.8){this.pulse-=dt;if(this.pulse<=0){let offset=new T.Vector3((Math.random()-.5)*7,2+Math.random()*7,(Math.random()-.5)*23);this.effects.explosion(this.origin.clone().add(offset),1.8+Math.random()*1.4);this.pulse=.22}this.boss.rotation.z=Math.sin(t*7)*.025;this.boss.position.y-=dt*.4;}
   if(t>=1.8&&!this.mainExplosion){this.mainExplosion=true;this.effects.breakup(this.boss);this.effects.explosion(this.origin.clone().add(new T.Vector3(0,4,0)),12,true);for(let z of [-10,10])this.effects.explosion(this.origin.clone().add(new T.Vector3(0,5,z)),5.5);this.ui.flash?.(.6);}
   if(t<5){let amount=ease(t/1.8),desired=this.origin.clone().add(new T.Vector3(24,18,47));this.camera.position.copy(this.startCamera).lerp(desired,amount);this.camera.lookAt(this.origin.clone().add(new T.Vector3(0,4,0)));this.ship.position.copy(this.startShip);this.ship.position.y+=Math.max(0,t-3)*.5;this.ui.flash?.(t>1.8?Math.max(0,.6-(t-1.8)*2):0);}
@@ -28,5 +62,29 @@ export class Finale{
   }
   if(t>18)this.ui.fade?.(ease((t-18)/.8));if(stage==='complete'){this.active=false;this.onComplete?.();}
  }
+ updateIncursion(dt){
+ this.time+=dt;const t=this.time;
+ this.environment.setVisible?.(false);if(this.savedFog===undefined)this.savedFog=this.scene.fog?.density;if(this.scene.fog)this.scene.fog.density=0;
+ this.group.visible=t<13;this.planet.material.opacity=0;this.deathStar.visible=t<10;this.stars.material.opacity=1;this.deathStar.position.set(0,0,-420);this.blast.position.copy(this.deathStar.position);
+ if(t<10){
+  this.stage='station-detonation';const u=Math.min(1,t/5);this.ship.visible=t<5;this.ship.position.set(-u*u*250,10+u*u*155,-170+u*330);this.ship.rotation.set(.05,-Math.PI+.3,-.2);this.ship.scale.setScalar(1+u*3);this.camera.position.set(0,20,110);this.camera.lookAt(0,0,-420);
+  if(t<=dt)this.ui.caption?.('CLEAR OF THE STATION','THE CHAIN REACTION IS SPREADING');
+  this.stationSparks.root.visible=t<6;this.stationSparks.update(t,true);this.pulse-=dt;if(this.pulse<=0&&t<7){const a=t*7.3,b=t*3.1;this.effects.explosion(new T.Vector3(Math.cos(a)*120,Math.sin(b)*100,-420+Math.sin(a)*80),8+t*2);this.pulse=.3;}
+  for(let i=0;i<this.debris.length;i++){const m=this.debris[i],delay=.7+(i%10)*.28,age=Math.max(0,t-delay),origin=m.userData.origin;m.visible=t>=delay;const outward=origin.clone().normalize();m.position.copy(origin).add(new T.Vector3(0,0,-420)).addScaledVector(outward,age*(12+i%7*8));m.rotation.set(age*.15*(i%3-1),age*.23*(i%2?1:-1),age*.12);}
+  this.station.shell.visible=t<4.2;
+
+  if(t>=6){const v=(t-6)/4;this.deathStar.visible=t<7;this.blast.material.color.setHex([0xffefcf,0xffa442,0xff5522,0x77bdff,0xd28bff][Math.min(4,Math.floor(v*5))]);this.blast.scale.setScalar(1+v*9);this.blast.material.opacity=Math.max(0,1-v);this.shock.scale.setScalar(180+v*1200);this.shock.material.opacity=1-v;this.ui.flash?.(Math.max(0,1-(t-6)*2));if(!this.mainExplosion){this.mainExplosion=true;this.sound?.effect('supernova');this.effects.shake=2;this.ui.caption?.('THE EMPIRE FALLS','DEATH STAR II DESTROYED');}}
+ }
+ else if(t<17){
+  this.stage='hyperspace';const h=t-10,entry=clamp(h/1.4);this.group.visible=false;this.jump.visible=true;this.ship.scale.setScalar(1-entry*.75);this.ship.visible=h<1.4;this.ship.rotation.set(0,0,0);this.ship.position.set(0,8,-20-h*(80+entry**3*900));this.camera.position.set(0,12,35);this.camera.lookAt(0,8,-100);this.jump.position.copy(this.camera.position);this.jump.quaternion.copy(this.camera.quaternion);this.camera.fov=56+entry*17;this.camera.updateProjectionMatrix();
+  // Same star-stretch, 1.4-second charge and shader tunnel used by the other levels.
+  this.streaks.material.opacity=h<1.4?entry:.24*Math.exp(-(h-1.4)*1.2);for(let i=0;i<this.starSeeds.length;i++){const seed=this.starSeeds[i];seed.z+=dt*(100+entry*600);if(seed.z>5)seed.z=-950;this.streakData.set([seed.x,seed.y,seed.z,seed.x,seed.y,seed.z+.1+entry**3*155],i*6)}this.streaks.geometry.attributes.position.needsUpdate=true;
+  this.tunnel.material.uniforms.opacity.value=ease((h-1.4)/.4);this.tunnel.material.uniforms.time.value=Math.max(0,h-1.4);this.tunnel.material.uniforms.aspect.value=this.camera.aspect;this.ui.flash?.(h>=1.4?Math.max(0,1-Math.abs(h-1.4)*4):0);
+  if(h<dt){this.ui.caption?.('NAVICOMPUTER READY','HYPERDRIVE LOCKED · YAVIN IV');this.sound?.effect('hypercharge')}if(h>=1.4&&h<1.4+dt){this.ui.caption?.('HYPERSPACE','RETURNING TO YAVIN IV');this.sound?.effect('hyperspace')}
+ }
+ else if(t<29){this.stage='yavin-landing';this.fireworks.root.visible=true;this.fireworks.update(t-17);this.fireworkClock-=dt;if(this.fireworkClock<=0){this.sound?.effect('explosion');this.fireworkClock=1.1}this.camera.fov=56;this.camera.updateProjectionMatrix();this.jump.visible=false;this.base.visible=true;this.group.visible=false;const pose=yavinLandingPose(t-17);this.ship.visible=true;this.ship.scale.setScalar(1);this.ship.position.set(pose.ship.x,pose.ship.y,pose.ship.z);this.ship.rotation.set(0,0,0);this.landingGear.visible=t>21;this.landingGear.position.copy(this.ship.position);this.camera.position.set(pose.camera.x,pose.camera.y,pose.camera.z);this.camera.lookAt(pose.look.x,pose.look.y,pose.look.z);if(t<17+dt){this.ui.caption?.('YAVIN IV · REBEL BASE','WELCOME HOME, GOLD LEADER');this.sound?.victory?.();}}
+ else{this.stage='complete';this.active=false;this.ui.fade?.(0);this.onComplete?.();}
+ }
+
 }
 function THREE_SAFE_BANK(u){return Math.sin(u*Math.PI*2)*-.12}
